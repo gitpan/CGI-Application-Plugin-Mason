@@ -3,7 +3,7 @@ NAME
     CGI::Application
 
 VERSION
-    1.00
+    1.01
 
 SYNOPSIS
       package YourApp;
@@ -58,7 +58,7 @@ METHOD
 
     Option:
 
-      comp_root          : HTML::Mason root dir(default: Cwd::getpwd value)
+      comp_root          : HTML::Mason root dir(default: Cwd::getcwd value)
       data_dir           : HTML::Mason cache and object file directory(default: /tmp/mason)
       template_extension : template extension(default: .mason)
 
@@ -184,6 +184,13 @@ METHOD
         my($self, $bodyref) = @_;
         ${$bodyref} = encode("shiftjis", decode("utf8", ${$bodyref}));
       });  
+
+ESCAPE METHOD
+  h
+    html escape
+
+  hs
+    html escape and replace white space and linefeed
 
 PRIVATE METHOD
   _get_interp_template_path

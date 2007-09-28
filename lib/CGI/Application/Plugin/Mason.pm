@@ -8,7 +8,7 @@ CGI::Application::Plugin::Mason - HTML::Mason plugin for CGI::Application
 
 =head1 VERSION
 
-1.00
+1.01
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,7 @@ Initialize HTML::Mason::Interp method.
 
 Option:
 
-  comp_root          : HTML::Mason root dir(default: Cwd::getpwd value)
+  comp_root          : HTML::Mason root dir(default: Cwd::getcwd value)
   data_dir           : HTML::Mason cache and object file directory(default: /tmp/mason)
   template_extension : template extension(default: .mason)
 
@@ -150,14 +150,8 @@ sub interp_config {
                                out_method => \$self->{__CAP_INTERP_OUTPUT}
                              );
     $interp->set_global( '$c' => $self );
-    # &HTML::Mason::Escapes::basic_html_escape is useless...
-    $interp->set_escape( h => sub {
-                                ${$_[0]} =~ s/&/&amp;/g;
-                                ${$_[0]} =~ s/</&lt;/g;
-                                ${$_[0]} =~ s/>/&gt;/g;
-                                ${$_[0]} =~ s/"/&quot;/g;
-                                ${$_[0]} =~ s/'/&#039;/g;
-                          } );
+    # VERSION 1.01 add h
+    $interp->set_escape( h  => \&h );
 
     $self->{__CAP_INTERP_OBJECT} = $interp;
 }
@@ -348,6 +342,23 @@ sub interp_post_exec {
     my($self, $bodyref) = @_;
     # do something...
 }
+
+=pod
+
+=head1 ESCAPE METHOD
+
+=head2 h
+
+html escape
+
+=cut
+
+sub h {
+
+    &HTML::Mason::Escapes::basic_html_escape($_[0]);
+    ${$_[0]} =~ s/'/&#039;/g;
+}
+
 
 =pod
 
